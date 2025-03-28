@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 .bg-texture {
+  background-image: url("/bg-texture.webp");
   background-size: 720px 460px;
   background-repeat: repeat;
   background-position: center;
-  background-image: url("/bg-texture.webp");
 }
 
 .button-cutout {
