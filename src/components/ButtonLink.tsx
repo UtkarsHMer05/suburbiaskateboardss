@@ -1,13 +1,36 @@
+// Import statements:
+// • FaCartShopping and FaPlus are icon components from the react-icons/fa6 package.
+//   They provide ready-to-use SVG icons that can be embedded in the UI.
+// • PrismicNextLink and PrismicNextLinkProps come from the @prismicio/next package,
+//   enabling integration with the Prismic CMS and providing a link component with enhanced functionality.
+// • clsx is a utility that helps manage conditional CSS class names.
 import { FaCartShopping, FaPlus } from "react-icons/fa6";
 import { PrismicNextLink, PrismicNextLinkProps } from "@prismicio/next";
 import clsx from "clsx";
 
+// Define the type for the ButtonLink component props:
+// Inherits all props from PrismicNextLinkProps and extends them with custom properties:
+// • color: Allows three preset color themes ("orange", "purple", "lime")
+//   which changes the background gradient and text color.
+// • size: Determines the size of the button ("sm", "md", "lg") and adjusts spacing, padding, and font size.
+// • icon: Optionally specifies which icon to display ("cart", "skateboard", or "plus").
 export type ButtonProps = PrismicNextLinkProps & {
   color?: "orange" | "purple" | "lime";
   size?: "sm" | "md" | "lg";
   icon?: "cart" | "skateboard" | "plus";
 };
 
+// The ButtonLink component:
+// • Renders a styled link (using PrismicNextLink) that looks like a button.
+// • It accepts props to customize its appearance (color, size, icon) and passes other props to the underlying link.
+// • Conditional CSS classes are applied based on the size and color props.
+// • If an icon is provided, it conditionally renders a container for the icon along with a small separating line.
+//
+// Steps inside ButtonLink:
+// 1. Destructure the props and set default values for color (orange) and size (md).
+// 2. Pass the combined CSS classes to the PrismicNextLink component using clsx.
+// 3. If an icon is defined, render a container for the icon and include the correct icon component.
+// 4. Finally, render the children passed into the ButtonLink.
 export function ButtonLink({
   color = "orange",
   size = "md",
@@ -18,6 +41,11 @@ export function ButtonLink({
 }: ButtonProps) {
   return (
     <PrismicNextLink
+      // Combine baseline button styling with conditional spacing and colors:
+      // • "button-cutout group mx-4 inline-flex items-center ..." are base classes applied to every button.
+      // • Size-dependent classes determine padding, gap, and text size.
+      // • Color-dependent classes define gradients and text color.
+      // • Any additional classes passed via className are appended.
       className={clsx(
         "button-cutout group mx-4 inline-flex items-center bg-gradient-to-b from-25% to-75% bg-[length:100%_400%] font-bold transition-[filter,background-position] duration-300 hover:bg-bottom",
         size === "sm" && "gap-2.5 py-2 text-base",
@@ -30,11 +58,16 @@ export function ButtonLink({
         color === "lime" && "from-brand-lime to-brand-orange text-black",
         className
       )}
+      // Spread any additional props (like href, target, etc.) to the PrismicNextLink
       {...props}
     >
+      {/* Conditionally render the icon section if the icon prop is provided */}
       {icon ? (
         <>
           <div
+            // Icon container div:
+            // • It centers the icon and adds transition effects (like rotation on hover).
+            // • The size of the container adjusts based on the button size.
             className={clsx(
               "flex size-6 items-center justify-center transition-transform group-hover:-rotate-[25deg] [&>svg]:h-full [&>svg]:w-full",
               size === "sm" && "size-5",
@@ -42,21 +75,33 @@ export function ButtonLink({
               size === "lg" && "~size-6/8"
             )}
           >
+            {/* Render the appropriate icon based on the icon prop */}
             {icon === "cart" && <FaCartShopping />}
             {icon === "skateboard" && <SkateboardIcon />}
             {icon === "plus" && <FaPlus />}
           </div>
+          {/* A vertical divider to separate the icon from the text */}
           <div className="w-px self-stretch bg-black/25" />
         </>
       ) : null}
+      {/* Render the button text or child elements provided */}
       {children}
     </PrismicNextLink>
   );
 }
 
+// The SkateboardIcon component:
+// • This small helper component renders a custom SVG icon representing a skateboard.
+// • The SVG is defined inline with its own viewBox and styling.
+// • It is used only when the "skateboard" option is passed to the icon prop in ButtonLink.
 function SkateboardIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 139 80">
+      {/* 
+        The <path> element draws the shape of the skateboard.
+        • 'fill' and 'fillOpacity' set the color and transparency.
+        • The 'd' attribute defines the shape outline of the skateboard.
+      */}
       <path
         fill="#000"
         fillOpacity="0.8"

@@ -1,13 +1,48 @@
 import { SVGProps } from "react";
 
+/**
+ * SkaterScribble Component:
+ * -------------------------
+ * This component renders an SVG that creates a decorative scribble effect.
+ *
+ * What it does:
+ * 1. It uses an SVG element as a container for the graphic.
+ * 2. It draws a complex, wavy line using a <path> element.
+ * 3. It applies CSS animation (animate-squiggle) to make the scribble move.
+ *
+ * Input:
+ * - Any standard SVG properties can be passed to the component via ...props.
+ * - The stroke color is controlled by the CSS "currentColor" which allows dynamic coloring.
+ */
 export function SkaterScribble(props: SVGProps<SVGSVGElement>) {
   return (
+    // SVG container sets up the drawing space.
+    // Attributes:
+    // • xmlns: Defines the SVG XML namespace (required for SVG elements).
+    // • fill="none": No fill color (only the stroke of the path is visible).
+    // • viewBox: Establishes the coordinate system (width: 231, height: 312).
+    // • {...props}: Spreads any additional SVG properties passed in.
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 231 312"
       {...props}
     >
+      {/**
+       * Path Element:
+       * --------------
+       * This <path> element is used to draw the scribble shape.
+       *
+       * Key details:
+       * - className:
+       *     • "skater-scribble-path": A custom class likely used for base styling.
+       *     • "animate-squiggle": Applies a keyframe animation to create a squiggly movement effect.
+       * - stroke="currentColor": Uses the current text color, allowing dynamic color control.
+       * - strokeLinecap="round": Renders the ends of the path as rounded for a softer look.
+       * - strokeLinejoin="round": Ensures that corners are rounded.
+       * - strokeWidth="9": Sets the thickness of the scribble line to 9 pixels.
+       * - d="...": Contains a series of commands (moveto, lineto, etc.) that draw the complex scribble shape.
+       */}
       <path
         className="skater-scribble-path animate-squiggle"
         stroke="currentColor"

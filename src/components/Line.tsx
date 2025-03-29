@@ -1,5 +1,14 @@
 import { SVGProps } from "react";
 
+/**
+ * The HorizontalLine component:
+ * --------------------------------
+ * • A functional React component that returns an SVG element representing a horizontal line.
+ * • It accepts all valid SVGProps<SVGSVGElement>, which lets you pass additional attributes like className, style, etc.
+ * • The <path> element inside sets up a curve or line design using specific coordinates (d attribute).
+ * • "preserveAspectRatio" ensures the SVG scales while keeping its aspect ratio.
+ * • "shapeRendering" set to "crispEdges" ensures sharp, non-antialiased edges for this line design.
+ */
 export function HorizontalLine(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -10,6 +19,11 @@ export function HorizontalLine(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path
+        /* 
+          fill="none" means no fill color, so it's just a stroke line. 
+          stroke="currentColor" uses the current text color from the parent element.
+          The 'd' attribute defines the actual curve or line path. 
+        */
         fill="none"
         stroke="currentColor"
         d="M.74 5.43c16.62-3.7 7.17-2.5 43.93-.8 17.36.79 15.14-2.9 24.1-2.63 1.21.04 5.55 1.98 7.47 2.14 5.24.42 8.17-.7 13.42-.44 3 .14 5.77 2.11 8.77 2.1 8.33-.04 16.56-2.19 24.89-2.25 10.32-.07 23.74 1.66 34.49 1.07 8.49-.46 17.47-1.77 25.92-2.65 11.98-1.24 18.38 2.3 30.24 3.88 12.82 1.7 5.26-2.3 21.35-2.14 10.15.1 19.92 1.14 29.88 1.7"
@@ -18,6 +32,14 @@ export function HorizontalLine(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * The VerticalLine component:
+ * --------------------------------
+ * • Similar to HorizontalLine, but designed to be a vertical line.
+ * • It also accepts SVGProps<SVGSVGElement> for customization.
+ * • "viewBox" is set for a narrow width (8) and tall height (555), making it vertical.
+ * • The path 'd' defines the vertical line or curve shape.
+ */
 export function VerticalLine(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
