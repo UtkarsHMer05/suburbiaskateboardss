@@ -1,114 +1,73 @@
-"use client"; // This tells Next.js that this component needs to run on the client (browser) side
+"use client";
+// "use client" tells Next.js that this component must run on the client side
+// (e.g., in the browser) rather than on the server.
 
 import React, { ReactNode, useEffect, useRef } from "react";
+// ReactNode: Represents any valid React child element (strings, elements, fragments).
 
-/**
- * Props for the SlideIn component:
- *
- * children: The content that should slide in (can be any React elements)
- * delay: How long to wait before starting the animation (in seconds)
- * duration: How long the slide animation should last (in seconds)
- */
 type Props = {
+  // children: The content (typically HTML or other components) that this component will wrap.
   children: ReactNode;
+  // delay (optional): How long to wait (in seconds) before starting the slide-in animation.
   delay?: number;
+  // duration (optional): How long (in seconds) the slide-in animation should take.
   duration?: number;
 };
 
 /**
- * The SlideIn component:
- * ----------------------
- * This component creates a nice "slide in" animation effect for any content
- * when it scrolls into the viewport (becomes visible on screen).
+ * SlideIn Component:
+ * -------------------
+ * This component observes when its child content comes into the viewport
+ * and then triggers a CSS animation ("slide-in") to smoothly bring it into view.
  *
- * How it works:
- * 1. Initially, the content is hidden (via the "slide-in-hidden" CSS class)
- * 2. When the element scrolls into view, it animates in using CSS animation
- * 3. You can customize how fast it animates and when it starts
+ * 1. It uses a ref (elementRef) to track the DOM element that wraps the children.
+ * 2. Sets up an IntersectionObserver to detect when the element enters the viewport.
+ * 3. When the element is visible, applies an inline style to start a CSS keyframe animation.
+ * 4. Unobserves the element after the animation is triggered to avoid re-running.
  *
- * Example use:
- * <SlideIn delay={0.2} duration={0.8}>
- *   <h2>This heading</h2>
- * </SlideIn>
+ * The component uses a default animation delay of 0 seconds and duration of 0.6 seconds,
+ * but these can be customized by passing props.
  */
 export function SlideIn({ children, delay = 0, duration = 0.6 }: Props) {
-  /**
-   * Create a reference to the container div element.
-   * A ref is like a "pointer" that gives us access to the actual DOM element
-   * so we can modify it or observe it directly.
-   */
+  // Create a ref to hold the HTML element where the kids will be rendered.
   const elementRef = useRef<HTMLDivElement>(null);
 
-  /**
-   * useEffect runs code after the component renders.
-   * In this case, it sets up:
-   * 1. An IntersectionObserver to detect when the element becomes visible
-   * 2. CSS variables to control animation timing
-   *
-   * The function inside useEffect will run after each render when
-   * either 'delay' or 'duration' values change.
-   */
   useEffect(() => {
-    // Get the actual DOM element from our ref
+    // Get a reference to the actual DOM element in the browser.
     const element = elementRef.current;
+    if (!element) return; // If it doesn't exist, exit early (safety check).
 
-    // If element doesn't exist yet, do nothing
-    if (!element) return;
-
-    /**
-     * Set CSS custom properties (variables) on the element to control animation.
-     * --slide-delay: Controls when the animation starts
-     * --slide-duration: Controls how long the animation takes
-     *
-     * These variables are used in the CSS that defines the animation.
-     */
-    element.style.setProperty("--slide-delay", `${delay}s`);
-    element.style.setProperty("--slide-duration", `${duration}s`);
-
-    /**
-     * Create an IntersectionObserver.
-     * This is a browser API that watches if an element is visible in the viewport.
-     * When the element becomes visible, it calls the callback function.
-     */
+    // Create an IntersectionObserver to watch when the element enters the viewport.
     const observer = new IntersectionObserver(
-      (entries) => {
-        // The callback receives an array of entries (observed elements)
-        entries.forEach((entry) => {
-          // If the element is now intersecting (visible)...
-          if (entry.isIntersecting) {
-            // Remove the 'slide-in-hidden' class to trigger the animation
-            element.classList.remove("slide-in-hidden");
+      ([entry]) => {
+        // If the element is in view.
+        if (entry.isIntersecting) {
+          // Add a style rule that triggers our "slide-in" animation,
+          // using dynamic values for duration, easing, delay, etc.
+          element.style.animation = `slide-in ${duration}s ease ${delay}s forwards`;
 
-            // Stop observing this element (animation only needed once)
-            observer.unobserve(element);
-          }
-        });
+          // Stop observing after it's triggered, so it doesn't repeatedly animate.
+          observer.unobserve(element);
+        }
       },
       {
-        // Element is considered "visible" when at least 10% is in view
-        threshold: 0.1,
-        // Start observing slightly before the element comes into view
-        rootMargin: "50px",
+        // threshold: 0 means the callback is triggered as soon as any part of the element is visible.
+        threshold: 0,
+        // rootMargin: "-150px" kicks in the animation slightly before it's fully in the viewport.
+        rootMargin: "-150px",
       }
     );
 
-    // Start observing our element
+    // Start observing our element.
     observer.observe(element);
 
-    // Cleanup function that runs when component unmounts
-    return () => {
-      // Stop observing to prevent memory leaks
-      observer.unobserve(element);
-    };
-  }, [delay, duration]); // Re-run this effect if delay or duration changes
+    // Cleanup: disconnect the observer when the component unmounts or updates.
+    return () => observer.disconnect();
+  }, [delay, duration]);
 
-  /**
-   * Render a div that:
-   * - Has the reference attached (elementRef)
-   * - Initially has the 'slide-in-hidden' class (starts invisible)
-   * - Contains whatever children components/elements were passed to it
-   */
   return (
+    // "slide-in-hidden" is typically a CSS class that sets the element to an offscreen
+    // position or zero opacity, making it hidden before the animation begins.
     <div ref={elementRef} className="slide-in-hidden">
       {children}
     </div>
